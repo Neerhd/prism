@@ -192,14 +192,16 @@ export default function Home() {
       const result   = landmarkerRef.current!.detectForVideo(video!, now);
       const curStage = stageRef.current;
 
-      // No hand in frame — reset transient state and clear canvas
+      // No hand in frame — reset transient state and clear canvas.
+      // Note: awaitingPinchReleaseRef is intentionally NOT cleared here.
+      // Resetting it when tracking is briefly lost would immediately re-arm
+      // the pinch, defeating the startup-protection and post-pinch lockout.
       if (!result.landmarks.length) {
         setHandDetected(false);
         ctx!.clearRect(0, 0, w, h);
-        currentPinchStateRef.current      = false;
-        pinchSustainRef.current           = null;
-        awaitingPinchReleaseRef.current   = false;
-        prevRawRotRef.current             = null;
+        currentPinchStateRef.current = false;
+        pinchSustainRef.current      = null;
+        prevRawRotRef.current        = null;
         return;
       }
 
