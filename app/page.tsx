@@ -80,10 +80,12 @@ export default function Home() {
   const pinchSustainRef       = useRef<number | null>(null);
   const lastPinchRef          = useRef(0);
   /**
-   * True after a pinch fires, until the user fully releases.
-   * Prevents the same hold from triggering two consecutive transitions.
+   * Starts true so the first pinch only fires after the user has opened their
+   * hand at least once. Prevents an accidental lock if fingers are already
+   * close together when the hand first enters the frame.
+   * Becomes false as soon as the pinch opens, then toggles normally thereafter.
    */
-  const awaitingPinchReleaseRef = useRef(false);
+  const awaitingPinchReleaseRef = useRef(true);
 
   // ── React state (render only) ──────────────────────────────────────────────
   const [cameraError, setCameraError]   = useState<string | null>(null);
