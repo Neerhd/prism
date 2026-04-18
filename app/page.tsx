@@ -17,8 +17,7 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { HandLandmarker } from "@mediapipe/tasks-vision";
-import type { HandLandmarkerResult } from "@mediapipe/tasks-vision";
+import type { HandLandmarker, HandLandmarkerResult } from "@mediapipe/tasks-vision";
 import { initHandLandmarker } from "@/lib/handTracker";
 import { isMiddleThumbPinching, handRotation } from "@/lib/gestures";
 import { sampleColorAt } from "@/lib/colorSampler";
@@ -148,32 +147,6 @@ export default function Home() {
   ) => {
     ctx.clearRect(0, 0, w, h);
     if (!result.landmarks.length) return;
-
-    const lm = result.landmarks[0];
-
-    // Stage colour: sampling=cyan, brightness=purple, done=amber
-    const skeletonColor =
-      currentStage === "sampling"   ? "#00FFFF" :
-      currentStage === "brightness" ? "#A78BFA" :
-      "#FCD34D";
-
-    // Draw bone connections
-    ctx.strokeStyle = skeletonColor;
-    ctx.lineWidth = 2;
-    for (const conn of HandLandmarker.HAND_CONNECTIONS) {
-      ctx.beginPath();
-      ctx.moveTo(lm[conn.start].x * w, lm[conn.start].y * h);
-      ctx.lineTo(lm[conn.end].x   * w, lm[conn.end].y   * h);
-      ctx.stroke();
-    }
-
-    // Draw joint dots
-    ctx.fillStyle = skeletonColor;
-    for (const pt of lm) {
-      ctx.beginPath();
-      ctx.arc(pt.x * w, pt.y * h, 3, 0, 2 * Math.PI);
-      ctx.fill();
-    }
 
     // Draw cursor ring at fingertip — pulses gently during sampling
     const cx = ftX * w;
